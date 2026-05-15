@@ -1,3 +1,4 @@
+# release binaries
 bin/
 obj/
 *.db
@@ -5,3 +6,4 @@ obj/
 *.suo
 .vs/
 .DS_Store
+releases/
