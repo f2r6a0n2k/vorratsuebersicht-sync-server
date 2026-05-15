@@ -1,8 +1,8 @@
 # Releases
 
-## Aktuelle Version: v0.9.0-beta.1 (Beta)
+## Aktuelle Version: v1.0.0 (Stable)
 
-📦 https://github.com/f2r6a0n2k/vorratsuebersicht-sync-server/releases/tag/v0.9.0-beta.1
+📦 https://github.com/f2r6a0n2k/vorratsuebersicht-sync-server/releases/tag/v1.0.0
 
 ### Server (SyncServer) – self-contained, ~40 MB
 
@@ -29,8 +29,11 @@
 |-------|-------------|
 | `web-ui.zip` | index.html + CSS + JS |
 
-### Nächste Schritte
+### Changelog v1.0.0
 
-- Beta 2: Android-Client (MAUI)
-- Beta 3: iOS-Client
-- v1.0.0: Stabile Version
+- **SyncServer**: Zentrale SQLite-Datenbank im LAN, REST-API für Artikel/Lager/Einkauf
+- **Desktop-Client**: Avalonia-GUI für Win/Linux/macOS mit vollem CRUD
+- **Web-UI**: Browser-Oberfläche (HTML/CSS/JS) – ohne Installation nutzbar
+- **Sync-Protokoll**: ChangeLog-basierte Push/Pull-Synchronisation
+- **Off-Grid**: Reiner LAN-Betrieb, kein Internet nötig
+- **Cross-Plattform**: Self-contained-Binaries für 5 Plattformen
