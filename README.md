@@ -47,52 +47,34 @@ Der SyncServer löst dies durch einen plattformunabhängigen REST-API-Ansatz. Je
 - **Off-Grid** — reiner LAN-Betrieb, kein Internet erforderlich
 - **Cross-Plattform** — Server läuft auf Windows, Linux, macOS, Raspberry Pi
 
-## Installation
+## Installationsanleitungen (plattformspezifisch)
 
-### Installationsskript (Linux/macOS/WSL)
+| Plattform | Anleitung | Autostart | Paket |
+|-----------|-----------|-----------|-------|
+| 🪟 **Windows** | [Anleitung](docs/installation-windows.md) | Windows-Dienst | `.zip` (EXE) |
+| 🐧 **Linux** | [Anleitung](docs/installation-linux.md) | systemd | `.tar.gz` (binary) |
+| 🍎 **macOS** | [Anleitung](docs/installation-macos.md) | launchd | `.tar.gz` (binary) |
+| 🥧 **Raspberry Pi** | [Anleitung](docs/installation-raspberry-pi.md) | systemd | `.tar.gz` (binary) |
+| 🐳 **Docker** | [Anleitung](docs/installation-docker.md) | Container | ghcr.io |
+| 📱 **Android-App** | [Integrationsanleitung](docs/integration-android.md) | — | Quelltext |
+| 🌐 **Sync-Protokoll** | [Protokoll-Doku](docs/sync-protocol.md) | — | — |
+
+**Kurzbefehle für den Schnellstart:**
 
 ```bash
+# Linux/macOS — Einzeiler-Installation
 curl -sL https://raw.githubusercontent.com/f2r6a0n2k/vorratsuebersicht-sync-server/main/install.sh | bash
-cd ~/vorratsuebersicht-sync-server
-./Vorratsuebersicht.SyncServer
-```
 
-### Oder: Binär von GitHub Releases (alle Plattformen)
-
-Lade das passende Paket von [Releases](https://github.com/f2r6a0n2k/vorratsuebersicht-sync-server/releases) herunter:
-
-| Plattform | Architektur | Datei |
-|-----------|-------------|-------|
-| Windows | x64 | `vorratsuebersicht-sync-server-win-x64.zip` |
-| Linux | x64 | `vorratsuebersicht-sync-server-linux-x64.tar.gz` |
-| Linux | ARM (RPi) | `vorratsuebersicht-sync-server-linux-arm.tar.gz` |
-| macOS | Intel | `vorratsuebersicht-sync-server-osx-x64.tar.gz` |
-| macOS | Apple Silicon | `vorratsuebersicht-sync-server-osx-arm64.tar.gz` |
-
-Einfach entpacken und starten — **kein .NET SDK nötig** (self-contained).
-
-### Docker
-
-```bash
+# Docker
 docker run -d --name vorratsync -p 5191:5191 ghcr.io/f2r6a0n2k/vorratsuebersicht-sync-server
-```
 
-Oder mit docker-compose:
-
-```bash
-curl -sLO https://raw.githubusercontent.com/f2r6a0n2k/vorratsuebersicht-sync-server/main/docker-compose.yml
-docker compose up -d
-```
-
-### Selbst bauen (mit .NET SDK)
-
-```bash
+# Selbst bauen
 git clone https://github.com/f2r6a0n2k/vorratsuebersicht-sync-server.git
 cd vorratsuebersicht-sync-server
 dotnet run --project src/Vorratsuebersicht.SyncServer
 ```
 
-Nach dem Start erscheint eine Übersicht mit allen LAN-IP-Adressen und Endpunkten. Der Server ist dann im gesamten lokalen Netzwerk erreichbar.
+→ Binäre Downloads (self-contained, ohne .NET SDK): [Releases](https://github.com/f2r6a0n2k/vorratsuebersicht-sync-server/releases)
 
 ## API-Endpunkte
 
@@ -190,33 +172,12 @@ Response:
 ]
 ```
 
-## In die Android-App integrieren
+## Client-Integration
 
-Der SyncServer kann als Backend für die bestehende [Vorratsübersicht](https://github.com/Stryi/Vorratsuebersicht) Android-App dienen. Dazu muss die App einen SyncService erhalten, der:
-
-1. Bei jeder Änderung die Daten lokal speichert **und** ans REST-API sendet
-2. Periodisch `/api/sync/changes?since=...` abruft
-3. Die empfangenen Änderungen in die lokale SQLite-Datenbank einspielt
-
-Siehe [`SyncService.cs`](src/Vorratsuebersicht.SyncServer/Services/SyncService.cs) für die serverseitige Referenzimplementierung.
-
-## Eigenen Sync-Client bauen
-
-Der Server verwendet ein einfaches HTTP-Protokoll. Jede Plattform kann einen Client implementieren:
-
-```csharp
-// Beispiel: Änderungen abrufen (C#)
-var json = await httpClient.GetStringAsync(
-    "http://192.168.1.42:5191/api/sync/changes?since=2026-01-01T00:00:00Z");
-var changes = JsonSerializer.Deserialize<List<SyncChangeDto>>(json);
-```
-
-```javascript
-// Beispiel: Artikel abrufen (JavaScript)
-fetch('http://192.168.1.42:5191/api/articles')
-  .then(r => r.json())
-  .then(articles => console.log(articles));
-```
+| Plattform | Anleitung |
+|-----------|-----------|
+| 📱 Android (Xamarin) | [Integrationsanleitung](docs/integration-android.md) — bestehende App anbinden |
+| 🌐 Alle Plattformen | [Sync-Protokoll](docs/sync-protocol.md) — eigenen Client bauen (JS, Python, Swift, C#) |
 
 ## Lizenz
 
