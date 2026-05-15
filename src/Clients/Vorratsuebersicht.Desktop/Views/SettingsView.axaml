@@ -1,0 +1,37 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Vorratsuebersicht.Desktop.Views.SettingsView">
+  <DockPanel>
+    <Border Padding="24">
+      <StackPanel Spacing="16" MaxWidth="500">
+        <TextBlock Text="Einstellungen" FontSize="20" FontWeight="Bold"/>
+
+        <Border Padding="16" Background="#f8f9fa" CornerRadius="8">
+          <StackPanel Spacing="10">
+            <TextBlock Text="SyncServer-Verbindung" FontSize="14" FontWeight="SemiBold"/>
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBox Text="{Binding ServerUrl}" Watermark="http://192.168.1.42:5191"/>
+              <Button Grid.Column="1" Command="{Binding ConnectCommand}" 
+                      Content="{Binding IsChecking, Converter={StaticResource ConnectText}}"
+                      Width="120"/>
+            </Grid>
+            <Border Background="#e8f5e9" CornerRadius="4" Padding="8"
+                    IsVisible="{Binding StatusText, Converter={StaticResource HasText}}">
+              <TextBlock Text="{Binding StatusText}" FontSize="13"/>
+            </Border>
+          </StackPanel>
+        </Border>
+
+        <Border Padding="16" Background="#f8f9fa" CornerRadius="8">
+          <StackPanel Spacing="8">
+            <TextBlock Text="Informationen" FontSize="14" FontWeight="SemiBold"/>
+            <TextBlock TextWrapping="Wrap" FontSize="13">
+              Der Desktop-Client verbindet sich mit dem Vorrats&#xfc;bersicht SyncServer im LAN.
+              Alle Daten werden live vom Server geladen und gespeichert.
+            </TextBlock>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </Border>
+  </DockPanel>
+</UserControl>

@@ -8,7 +8,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  server:
     strategy:
       matrix:
         rid: [win-x64, linux-x64, linux-arm, osx-x64, osx-arm64]
@@ -16,23 +16,28 @@ jobs:
           - rid: win-x64
             os: ubuntu-latest
             ext: .exe
-            artifact: vorratsuebersicht-sync-server-win-x64.zip
+            artifact: vorratsuebersicht-sync-server-windows-x64.zip
+            folder: windows
           - rid: linux-x64
             os: ubuntu-latest
             ext: ""
             artifact: vorratsuebersicht-sync-server-linux-x64.tar.gz
+            folder: linux
           - rid: linux-arm
             os: ubuntu-latest
             ext: ""
             artifact: vorratsuebersicht-sync-server-linux-arm.tar.gz
+            folder: linux-arm
           - rid: osx-x64
             os: macos-latest
             ext: ""
-            artifact: vorratsuebersicht-sync-server-osx-x64.tar.gz
+            artifact: vorratsuebersicht-sync-server-macos-x64.tar.gz
+            folder: macos
           - rid: osx-arm64
             os: macos-latest
             ext: ""
-            artifact: vorratsuebersicht-sync-server-osx-arm64.tar.gz
+            artifact: vorratsuebersicht-sync-server-macos-arm64.tar.gz
+            folder: macos
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -43,13 +48,7 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Restore
-        run: dotnet restore src/Vorratsuebersicht.SyncServer
-
-      - name: Build
-        run: dotnet build src/Vorratsuebersicht.SyncServer --configuration Release --no-restore
-
-      - name: Publish self-contained
+      - name: Publish server (${{ matrix.rid }})
         run: |
           dotnet publish src/Vorratsuebersicht.SyncServer \
             --configuration Release \
@@ -57,36 +56,101 @@ jobs:
             --self-contained true \
             -p:PublishSingleFile=true \
             -p:IncludeNativeLibrariesForSelfExtract=true \
-            -o publish/${{ matrix.rid }}
+            -o publish/server/${{ matrix.folder }}
 
-      - name: Package (Windows)
-        if: matrix.rid == 'win-x64'
+      - name: Package server (${{ matrix.rid }})
         run: |
-          cd publish/${{ matrix.rid }}
-          zip -r ../${{ matrix.artifact }} .
+          cd publish/server/${{ matrix.folder }}
+          if [ "${{ matrix.rid }}" = "win-x64" ]; then
+            zip -r ../${{ matrix.artifact }} .
+          else
+            tar czf ../${{ matrix.artifact }} .
+          fi
 
-      - name: Package (Linux/macOS)
-        if: matrix.rid != 'win-x64'
-        run: |
-          cd publish/${{ matrix.rid }}
-          tar czf ../${{ matrix.artifact }} .
-
-      - name: Upload artifact
+      - name: Upload server artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
-          path: publish/${{ matrix.artifact }}
+          path: publish/server/${{ matrix.artifact }}
 
-  docker:
+  desktop:
+    strategy:
+      matrix:
+        rid: [win-x64, linux-x64, osx-x64, osx-arm64]
+        include:
+          - rid: win-x64
+            os: ubuntu-latest
+            ext: .exe
+            artifact: vorratsuebersicht-desktop-windows-x64.zip
+            folder: windows
+          - rid: linux-x64
+            os: ubuntu-latest
+            ext: ""
+            artifact: vorratsuebersicht-desktop-linux-x64.tar.gz
+            folder: linux
+          - rid: osx-x64
+            os: macos-latest
+            ext: ""
+            artifact: vorratsuebersicht-desktop-macos-x64.tar.gz
+            folder: macos
+          - rid: osx-arm64
+            os: macos-latest
+            ext: ""
+            artifact: vorratsuebersicht-desktop-macos-arm64.tar.gz
+            folder: macos
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Publish desktop (${{ matrix.rid }})
+        run: |
+          dotnet publish src/Clients/Vorratsuebersicht.Desktop \
+            --configuration Release \
+            --runtime ${{ matrix.rid }} \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -o publish/desktop/${{ matrix.folder }}
+
+      - name: Package desktop (${{ matrix.rid }})
+        run: |
+          cd publish/desktop/${{ matrix.folder }}
+          if [ "${{ matrix.rid }}" = "win-x64" ]; then
+            zip -r ../${{ matrix.artifact }} .
+          else
+            tar czf ../${{ matrix.artifact }} .
+          fi
+
+      - name: Upload desktop artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: publish/desktop/${{ matrix.artifact }}
+
+  web:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build Docker image
-        run: docker build -t vorratsuebersicht-sync-server .
+      - name: Package web UI
+        run: |
+          mkdir -p publish/web
+          cp -r src/Vorratsuebersicht.SyncServer/wwwroot/* publish/web/
+          cd publish
+          zip -r web-ui.zip web/
+      - name: Upload web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vorratsuebersicht-web-ui.zip
+          path: publish/web-ui.zip
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build]
+    needs: [server, desktop, web]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -96,8 +160,38 @@ jobs:
         with:
           path: artifacts
 
-      - name: Create Release
+      - name: Create release structure
+        run: |
+          mkdir -p release/server release/desktop release/web-ui
+          find artifacts -name "vorratsuebersicht-sync-server-*" -exec cp {} release/server/ \;
+          find artifacts -name "vorratsuebersicht-desktop-*" -exec cp {} release/desktop/ \;
+          find artifacts -name "vorratsuebersicht-web-ui.zip" -exec cp {} release/web-ui/ \;
+          ls -R release/
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/**/*
+          files: release/**/*
           generate_release_notes: true
+          body: |
+            ## Vorratsübersicht SyncServer v${{ github.ref_name }}
+
+            ### Server (SyncServer - Zentrale Datenbank im LAN)
+            | Plattform | Datei |
+            |-----------|-------|
+            | Windows | `server/vorratsuebersicht-sync-server-windows-x64.zip` |
+            | Linux | `server/vorratsuebersicht-sync-server-linux-x64.tar.gz` |
+            | Linux ARM (RPi) | `server/vorratsuebersicht-sync-server-linux-arm.tar.gz` |
+            | macOS Intel | `server/vorratsuebersicht-sync-server-macos-x64.tar.gz` |
+            | macOS Apple Silicon | `server/vorratsuebersicht-sync-server-macos-arm64.tar.gz` |
+
+            ### Desktop-Client (GUI für Win/Linux/macOS)
+            | Plattform | Datei |
+            |-----------|-------|
+            | Windows | `desktop/vorratsuebersicht-desktop-windows-x64.zip` |
+            | Linux | `desktop/vorratsuebersicht-desktop-linux-x64.tar.gz` |
+            | macOS Intel | `desktop/vorratsuebersicht-desktop-macos-x64.tar.gz` |
+            | macOS Apple Silicon | `desktop/vorratsuebersicht-desktop-macos-arm64.tar.gz` |
+
+            ### Web-UI (Browser)
+            - `web-ui/vorratsuebersicht-web-ui.zip`

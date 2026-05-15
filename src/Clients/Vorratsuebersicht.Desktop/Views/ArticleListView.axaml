@@ -1,0 +1,71 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Vorratsuebersicht.Desktop.Views.ArticleListView">
+  <DockPanel>
+    <Border DockPanel.Dock="Top" Padding="12 8">
+      <Grid ColumnDefinitions="*,Auto,Auto">
+        <TextBox Text="{Binding SearchText}" Watermark="Suchen..."/>
+        <Button Grid.Column="1" Command="{Binding NewArticleCommand}" Content="+ Neu"/>
+        <Button Grid.Column="2" Command="{Binding LoadCommand}" Content="Aktualisieren"/>
+      </Grid>
+    </Border>
+
+    <ScrollViewer>
+      <ListBox ItemsSource="{Binding Articles}" IsVisible="{Binding ShowEditor, Converter={StaticResource Not}}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Padding="8" Margin="4 2">
+              <Grid ColumnDefinitions="*,Auto">
+                <StackPanel>
+                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                  <TextBlock Text="{Binding Category}" FontSize="12" Foreground="#666"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
+                  <Button Command="{Binding $parent[ListBox].DataContext.EditCommand}"
+                          CommandParameter="{Binding}" Content="&#x270E;" Width="32"/>
+                  <Button Command="{Binding $parent[ListBox].DataContext.DeleteCommand}"
+                          CommandParameter="{Binding}" Content="&#x2716;" Width="32"
+                          Background="#e74c3c"/>
+                </StackPanel>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </ScrollViewer>
+
+    <Border IsVisible="{Binding ShowEditor}" Padding="16">
+      <StackPanel Spacing="8">
+        <TextBlock FontSize="16" FontWeight="Bold">
+          <TextBlock.Text>
+            <Binding Path="EditArticle.ArticleId" StringFormat="{}{0}">
+              <Binding.FallbackValue>Neuer Artikel</Binding.FallbackValue>
+            </Binding>
+          </TextBlock.Text>
+        </TextBlock>
+        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+          <TextBox Text="{Binding EditArticle.Name}" Watermark="Name *"/>
+          <TextBox Grid.Column="1" Text="{Binding EditArticle.Manufacturer}" Watermark="Hersteller"/>
+          <TextBox Grid.Row="1" Text="{Binding EditArticle.Category}" Watermark="Kategorie"/>
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EditArticle.SubCategory}" Watermark="Unterkategorie"/>
+          <TextBox Grid.Row="2" Text="{Binding EditArticle.EANCode}" Watermark="EAN-Code"/>
+          <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EditArticle.StorageName}" Watermark="Lagername"/>
+          <TextBox Grid.Row="3" Text="{Binding EditArticle.Size}" Watermark="Größe"/>
+          <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EditArticle.Unit}" Watermark="Einheit"/>
+          <TextBox Grid.Row="4" Text="{Binding EditArticle.Supermarket}" Watermark="Supermarkt"/>
+          <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding EditArticle.Price}" Watermark="Preis"/>
+        </Grid>
+        <TextBox Text="{Binding EditArticle.Notes}" Watermark="Notizen"/>
+        <CheckBox Content="Unbegrenzt haltbar" IsChecked="{Binding EditArticle.DurableInfinity}"/>
+        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+          <Button Command="{Binding CancelCommand}" Content="Abbrechen"/>
+          <Button Command="{Binding SaveCommand}" Content="Speichern" Background="#27ae60"/>
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
+    <Border DockPanel.Dock="Bottom" IsVisible="{Binding IsLoading}">
+      <ProgressBar IsIndeterminate="True" Height="4"/>
+    </Border>
+  </DockPanel>
+</UserControl>

@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A44559AC-CD0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vorratsuebersicht.SyncServer", "src\Vorratsuebersicht.SyncServer\Vorratsuebersicht.SyncServer.csproj", "{49DCD70F-6725-44C0-BA2B-F0AFB2EAA060}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{72101457-9FE2-49C3-AC4D-8AE9CD80A99D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vorratsuebersicht.Desktop", "src\Clients\Vorratsuebersicht.Desktop\Vorratsuebersicht.Desktop.csproj", "{A27522C4-42E5-4C8C-817A-BFBFE6C1D117}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +24,14 @@ Global
 		{49DCD70F-6725-44C0-BA2B-F0AFB2EAA060}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49DCD70F-6725-44C0-BA2B-F0AFB2EAA060}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49DCD70F-6725-44C0-BA2B-F0AFB2EAA060}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A27522C4-42E5-4C8C-817A-BFBFE6C1D117}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A27522C4-42E5-4C8C-817A-BFBFE6C1D117}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A27522C4-42E5-4C8C-817A-BFBFE6C1D117}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A27522C4-42E5-4C8C-817A-BFBFE6C1D117}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{49DCD70F-6725-44C0-BA2B-F0AFB2EAA060} = {A44559AC-CD06-4772-9820-B1588B84FF1B}
+		{72101457-9FE2-49C3-AC4D-8AE9CD80A99D} = {A44559AC-CD06-4772-9820-B1588B84FF1B}
+		{A27522C4-42E5-4C8C-817A-BFBFE6C1D117} = {72101457-9FE2-49C3-AC4D-8AE9CD80A99D}
 	EndGlobalSection
 EndGlobal
