@@ -65,6 +65,12 @@ download_release() {
   echo ""
   echo "Zum Starten:"
   echo "  $HOME/vorratsuebersicht-sync-server/Vorratsuebersicht.SyncServer"
+  echo ""
+  echo "Dann im Browser öffnen: http://localhost:5191/"
+  echo ""
+  echo "Hinweis: Der Server ist ab Start im gesamten LAN erreichbar."
+  echo "Sollte der Port 5191 belegt sein, anderen Port verwenden:"
+  echo "  ASPNETCORE_URLS=http://0.0.0.0:5192 $HOME/vorratsuebersicht-sync-server/Vorratsuebersicht.SyncServer"
 }
 
 main() {

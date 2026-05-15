@@ -9,6 +9,12 @@
 Der Server startet und zeigt seine LAN-IP-Adressen an.  
 Im Browser erreichbar unter: `http://localhost:5191/`
 
+> **Hinweis:** Der Server bindet automatisch an `http://0.0.0.0:5191` (alle Netzwerkschnittstellen).
+> Falls der Port belegt ist, einen anderen verwenden:
+> ```bash
+> ASPNETCORE_URLS="http://0.0.0.0:5192" /opt/vorratsync/Vorratsuebersicht.SyncServer
+> ```
+
 ## Variante B: Als Windows-Dienst (Autostart)
 
 Damit der Server automatisch im Hintergrund läuft:
