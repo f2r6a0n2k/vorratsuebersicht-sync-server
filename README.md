@@ -66,16 +66,12 @@ Der SyncServer löst dies durch einen plattformunabhängigen REST-API-Ansatz. Je
 **Kurzbefehle für den Schnellstart:**
 
 ```bash
-# Linux/macOS — Einzeiler-Installation
-curl -sL https://raw.githubusercontent.com/f2r6a0n2k/vorratsuebersicht-sync-server/main/install.sh | bash
-
-# Docker
-docker run -d --name vorratsync -p 5191:5191 ghcr.io/f2r6a0n2k/vorratsuebersicht-sync-server
-
-# Selbst bauen
-git clone https://github.com/f2r6a0n2k/vorratsuebersicht-sync-server.git
-cd vorratsuebersicht-sync-server
-dotnet run --project src/Vorratsuebersicht.SyncServer
+curl -sL https://github.com/f2r6a0n2k/vorratsuebersicht-sync-server/releases/download/v1.0.0/vorratsuebersicht-sync-server-linux-x64.tar.gz \
+  -o /tmp/sync.tar.gz
+sudo mkdir -p /opt/vorratsync
+sudo tar xzf /tmp/sync.tar.gz -C /opt/vorratsync
+sudo chmod +x /opt/vorratsync/Vorratsuebersicht.SyncServer
+/opt/vorratsync/Vorratsuebersicht.SyncServer
 ```
 
 → Binäre Downloads (self-contained, ohne .NET SDK): [Releases](https://github.com/f2r6a0n2k/vorratsuebersicht-sync-server/releases)
