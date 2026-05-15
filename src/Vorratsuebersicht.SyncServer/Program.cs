@@ -10,8 +10,6 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
     ContentRootPath = AppContext.BaseDirectory
 });
 
-builder.WebHost.UseUrls("http://0.0.0.0:5191");
-
 var dbPath = builder.Configuration.GetValue<string>("Server:DatabasePath") ?? "vorratsuebersicht.db";
 var connectionString = $"Data Source={dbPath}";
 
@@ -37,6 +35,7 @@ app.MapArticleEndpoints();
 app.MapStorageItemEndpoints();
 app.MapShoppingItemEndpoints();
 app.MapSyncEndpoints();
+app.MapMigrateEndpoints();
 app.MapDiscoveryEndpoints();
 
 app.MapFallbackToFile("index.html");
