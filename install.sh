@@ -66,6 +66,8 @@ download_release() {
   echo "Zum Starten:"
   echo "  $HOME/vorratsuebersicht-sync-server/Vorratsuebersicht.SyncServer"
   echo ""
+  echo "Im Browser öffnen: http://localhost:5191/"
+  echo ""
   echo "Dann im Browser öffnen: http://localhost:5191/"
   echo ""
   echo "Hinweis: Der Server ist ab Start im gesamten LAN erreichbar."

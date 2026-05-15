@@ -2,6 +2,10 @@
 
 **LAN-Synchronisationsserver für die [Vorratsübersicht](https://github.com/Stryi/Vorratsuebersicht) Android-App**
 
+[![Release](https://img.shields.io/github/v/release/f2r6a0n2k/vorratsuebersicht-sync-server?label=v1.0.0&color=success)](https://github.com/f2r6a0n2k/vorratsuebersicht-sync-server/releases)
+[![Build](https://img.shields.io/github/actions/workflow/status/f2r6a0n2k/vorratsuebersicht-sync-server/build.yml?branch=main)](https://github.com/f2r6a0n2k/vorratsuebersicht-sync-server/actions)
+[![License](https://img.shields.io/github/license/f2r6a0n2k/vorratsuebersicht-sync-server)](LICENSE)
+
 Ein leichtgewichtiger ASP.NET-Core-Server, der als zentrale Datenbank im lokalen Netzwerk dient. Ermöglicht die gemeinsame Nutzung von Artikelstamm, Lagerbestand und Einkaufszettel über mehrere Geräte hinweg — **ohne Internet**, nur im LAN.
 
 ## Architektur
