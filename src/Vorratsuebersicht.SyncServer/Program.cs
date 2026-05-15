@@ -4,7 +4,13 @@ using Vorratsuebersicht.SyncServer.Data;
 using Vorratsuebersicht.SyncServer.Endpoints;
 using Vorratsuebersicht.SyncServer.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = AppContext.BaseDirectory
+});
+
+builder.WebHost.UseUrls("http://0.0.0.0:5191");
 
 var dbPath = builder.Configuration.GetValue<string>("Server:DatabasePath") ?? "vorratsuebersicht.db";
 var connectionString = $"Data Source={dbPath}";
