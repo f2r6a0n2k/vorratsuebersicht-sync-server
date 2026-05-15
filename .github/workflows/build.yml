@@ -1,0 +1,103 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        rid: [win-x64, linux-x64, linux-arm, osx-x64, osx-arm64]
+        include:
+          - rid: win-x64
+            os: ubuntu-latest
+            ext: .exe
+            artifact: vorratsuebersicht-sync-server-win-x64.zip
+          - rid: linux-x64
+            os: ubuntu-latest
+            ext: ""
+            artifact: vorratsuebersicht-sync-server-linux-x64.tar.gz
+          - rid: linux-arm
+            os: ubuntu-latest
+            ext: ""
+            artifact: vorratsuebersicht-sync-server-linux-arm.tar.gz
+          - rid: osx-x64
+            os: macos-latest
+            ext: ""
+            artifact: vorratsuebersicht-sync-server-osx-x64.tar.gz
+          - rid: osx-arm64
+            os: macos-latest
+            ext: ""
+            artifact: vorratsuebersicht-sync-server-osx-arm64.tar.gz
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore src/Vorratsuebersicht.SyncServer
+
+      - name: Build
+        run: dotnet build src/Vorratsuebersicht.SyncServer --configuration Release --no-restore
+
+      - name: Publish self-contained
+        run: |
+          dotnet publish src/Vorratsuebersicht.SyncServer \
+            --configuration Release \
+            --runtime ${{ matrix.rid }} \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            -o publish/${{ matrix.rid }}
+
+      - name: Package (Windows)
+        if: matrix.rid == 'win-x64'
+        run: |
+          cd publish/${{ matrix.rid }}
+          zip -r ../${{ matrix.artifact }} .
+
+      - name: Package (Linux/macOS)
+        if: matrix.rid != 'win-x64'
+        run: |
+          cd publish/${{ matrix.rid }}
+          tar czf ../${{ matrix.artifact }} .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: publish/${{ matrix.artifact }}
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t vorratsuebersicht-sync-server .
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true

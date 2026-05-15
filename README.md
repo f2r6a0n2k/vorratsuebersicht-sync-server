@@ -47,23 +47,48 @@ Der SyncServer löst dies durch einen plattformunabhängigen REST-API-Ansatz. Je
 - **Off-Grid** — reiner LAN-Betrieb, kein Internet erforderlich
 - **Cross-Plattform** — Server läuft auf Windows, Linux, macOS, Raspberry Pi
 
-## Voraussetzungen
+## Installation
 
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (oder höher)
-- Ein Gerät im LAN als Server (Raspberry Pi, Laptop, Desktop, etc.)
-
-## Installation & Start
+### Installationsskript (Linux/macOS/WSL)
 
 ```bash
-# Repository klonen
+curl -sL https://raw.githubusercontent.com/f2r6a0n2k/vorratsuebersicht-sync-server/main/install.sh | bash
+cd ~/vorratsuebersicht-sync-server
+./Vorratsuebersicht.SyncServer
+```
+
+### Oder: Binär von GitHub Releases (alle Plattformen)
+
+Lade das passende Paket von [Releases](https://github.com/f2r6a0n2k/vorratsuebersicht-sync-server/releases) herunter:
+
+| Plattform | Architektur | Datei |
+|-----------|-------------|-------|
+| Windows | x64 | `vorratsuebersicht-sync-server-win-x64.zip` |
+| Linux | x64 | `vorratsuebersicht-sync-server-linux-x64.tar.gz` |
+| Linux | ARM (RPi) | `vorratsuebersicht-sync-server-linux-arm.tar.gz` |
+| macOS | Intel | `vorratsuebersicht-sync-server-osx-x64.tar.gz` |
+| macOS | Apple Silicon | `vorratsuebersicht-sync-server-osx-arm64.tar.gz` |
+
+Einfach entpacken und starten — **kein .NET SDK nötig** (self-contained).
+
+### Docker
+
+```bash
+docker run -d --name vorratsync -p 5191:5191 ghcr.io/f2r6a0n2k/vorratsuebersicht-sync-server
+```
+
+Oder mit docker-compose:
+
+```bash
+curl -sLO https://raw.githubusercontent.com/f2r6a0n2k/vorratsuebersicht-sync-server/main/docker-compose.yml
+docker compose up -d
+```
+
+### Selbst bauen (mit .NET SDK)
+
+```bash
 git clone https://github.com/f2r6a0n2k/vorratsuebersicht-sync-server.git
 cd vorratsuebersicht-sync-server
-
-# Starten (entwickelt sich auf http://0.0.0.0:5191)
-dotnet run --project src/Vorratsuebersicht.SyncServer
-
-# Oder Release-Build
-dotnet build -c Release src/Vorratsuebersicht.SyncServer
 dotnet run --project src/Vorratsuebersicht.SyncServer
 ```
 

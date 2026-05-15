@@ -1,0 +1,12 @@
+services:
+  syncserver:
+    build: .
+    container_name: vorratsuebersicht-sync
+    ports:
+      - "5191:5191"
+    volumes:
+      - data:/data
+    restart: unless-stopped
+
+volumes:
+  data:
